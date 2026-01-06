@@ -1,0 +1,34 @@
+_1.Load & Preprocess Data_
+
+```import pandas as pd
+import torch
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split```
+
+
+```df = pd.read_csv("sensor_data.csv")
+
+features = ['co', 'humidity', 'light', 'lpg', 'motion', 'smoke', 'temp']
+X = df[features].values
+
+# Example rule-based labeling (can be replaced)
+df['label'] = (
+    (df['co'] > 9) |
+    (df['smoke'] > 300) |
+    (df['temp'] > 50)
+).astype(int)
+
+y = df['label'].values
+
+scaler = StandardScaler()
+X = scaler.fit_transform(X)
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+X_train = torch.tensor(X_train, dtype=torch.float32)
+X_test  = torch.tensor(X_test, dtype=torch.float32)
+y_train = torch.tensor(y_train, dtype=torch.long)
+y_test  = torch.tensor(y_test, dtype=torch.long)
+```
